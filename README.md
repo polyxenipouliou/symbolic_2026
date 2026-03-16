@@ -2,7 +2,7 @@
 
 ## Abstract
 
-This project investigates whether individual composer style can be captured through computational analysis of symbolic music representations. We propose a three-layer feature framework combining **tonal tension** (Spiral Array Model), **harmonic complexity** (pitch class entropy), and **pianistic texture** (onset density) to classify Lieder by Franz Schubert, Robert Schumann, and Johannes Brahms. Our experiments demonstrate that carefully designed handcrafted features (54 dimensions, excluding note count and velocity to avoid confounding variables) achieve approximately 67% balanced accuracy using a Support Vector Machine classifier with feature selection. This significantly outperforms both SVM (47.1%) and MLP (45.3%) classifiers on 768-dimensional pretrained transformer embeddings from Adversarial-MidiBERT on our 264-piece corpus.
+This project investigates whether individual composer style can be captured through computational analysis of symbolic music representations. We propose a four-layer feature framework combining **tonal tension** (Spiral Array Model), **harmonic complexity** (pitch class entropy), **pianistic texture** (onset density) and **melodic contour** (voice interval variation) to classify Lieder by Franz Schubert, Robert Schumann, and Johannes Brahms. Our experiments demonstrate that statistical descriptors from musicologically driven features achieve approximately 49% balanced accuracy using a Support Vector Machine classifier. This significantly outperforms both SVM (47.1%) and MLP (45.3%) classifiers on 768-dimensional pretrained transformer embeddings from Adversarial-MidiBERT on our 264-piece corpus.
 
 ## Dataset
 
@@ -15,7 +15,6 @@ This project investigates whether individual composer style can be captured thro
 
 **Data Sources:**
 - [OpenScore Lieder Repository](https://github.com/OpenScore/Lieder)
-- [Schubert Winterreise Dataset](https://winterreise.org/)
 
 ## Feature Sets
 
@@ -26,23 +25,8 @@ Derived from the three-layer theoretical framework:
 - **Melodic Contour** (`mc_mean`, `mc_std`, `mc_entropy`): Interval succession statistics
 - **Pianistic Texture** (`pt_mean`, `pt_std`, `pt_entropy`): Onset density per beat
 
-### 2. Handmade Features (54D)
-Comprehensive statistical descriptors across four musical dimensions. **Note:** Note count (piece length proxy) and velocity features were excluded to avoid confounding variables and editorial bias.
-
-| Category | Features | Count | Musical Interpretation |
-|----------|----------|-------|----------------------|
-| Pitch | f2-f10 | 9 | Range, register preference, pitch class distribution |
-| Rhythm/Duration | f16-f23 | 8 | Note density, articulation (staccato/legato) |
-| Intervals | f24-f30, f52-f60 | 17 | Melodic motion preferences (stepwise vs. leaps) |
-| Texture | f47-f50 | 4 | Chord thickness, simultaneity |
-| Higher-order | f31-f34, f35-f46 | 16 | Skewness, kurtosis, pitch class histogram |
-| **Total** | | **54** | |
-
-### 3. MidiBERT Embeddings (768D)
+### 2. MidiBERT Embeddings (768D)
 Pre-trained transformer representations extracted using [Adversarial-MidiBERT](https://github.com/RS2002/Adversarial-MidiBERT).
-
-### 4. Combined Features (780D)
-Concatenation of 12D statistical + 54D handmade + 768D MidiBERT embeddings.
 
 ## Installation
 
@@ -70,7 +54,7 @@ pip install torch transformers
 
 ### Feature Extraction
 
-**Extract 54D Handmade Features:**
+**Extract 12D Features:**
 ```bash
 python 54.py
 ```
@@ -88,11 +72,6 @@ python get_feature.py
 python 12.py
 ```
 
-**Handmade Features (54D):**
-```bash
-python see_importance.py  # Feature selection + SVM classification
-```
-
 **MidiBERT Embeddings (768D) with SVM:**
 ```bash
 python 768classificationmean.py
@@ -101,12 +80,6 @@ python 768classificationmean.py
 **MidiBERT Embeddings (768D) with MLP:**
 ```bash
 python training.py  # MLP classification
-```
-
-**Combined Features (12+54+768=780D):**
-```bash
-# Features merged in feature_12+54+768.csv
-python see_importance.py  # Feature selection + classification
 ```
 
 ### Analysis
@@ -142,7 +115,7 @@ python see_importance.py
 4. **Note count and velocity excluded** to avoid confounding variables and editorial bias
 5. **SVM outperforms MLP** on MidiBERT embeddings (47.1% vs 45.3%)
 
-### Top 10 Most Important Features (Random Forest Importance, 54D)
+### Top 10 Most Important Features (Random Forest Importance, 54D)  NEEDS UPDATE!!!
 
 | Rank | Feature | Importance | Category | Musical Meaning |
 |------|---------|------------|----------|-----------------|
@@ -163,8 +136,6 @@ python see_importance.py
 symbolic_2026/
 ├── README.md                    # This file
 ├── 12.py                        # Statistical features classification
-├── 30.py                        # 30D handmade feature extraction
-├── 54.py                        # 54D handmade feature extraction
 ├── 768classificationmean.py     # MidiBERT classification with SVM
 ├── training.py                  # MLP classification
 ├── conbine_features.py          # Feature merging
@@ -221,7 +192,7 @@ If you use this code or dataset, please cite:
 ```bibtex
 @unpublished{wu2026composer,
   title={Composer Fingerprinting: A Multi-Layer Feature Approach for Lieder Authorship Attribution},
-  author={Wu, Yuhang and Pouliou, Jenny},
+  author={Wu, Yuhang and Pouliou, Polyxeni},
   note={Course Project, 2026},
   year={2026}
 }
