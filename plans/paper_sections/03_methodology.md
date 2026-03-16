@@ -156,13 +156,13 @@ This yields a 12-dimensional feature vector per piece (3 base features × 3 stat
 
 ---
 
-## 3.4 Handmade Feature Extension (55D)
+## 3.4 Handmade Feature Extension (54D)
 
-To complement the theory-driven 12D feature set, we extracted 55 additional statistical features across four musical dimensions:
+To complement the theory-driven 12D feature set, we extracted 54 additional statistical features across four musical dimensions:
 
-### 3.4.1 Pitch Features (f1-f10)
-- Note count, pitch mean/std/range
-- Unique pitch classes, pitch class entropy
+### 3.4.1 Pitch Features (f2-f10)
+- Pitch mean/std/range (f2-f4)
+- Unique pitch classes, pitch class entropy (f5-f10)
 - Register preferences (high/low pitch ratios)
 
 ### 3.4.2 Rhythm/Duration Features (f16-f23)
@@ -183,9 +183,11 @@ To complement the theory-driven 12D feature set, we extracted 55 additional stat
 - Skewness and kurtosis of distributions
 - Pitch class histogram (12 bins)
 
-### 3.4.6 Velocity Features (Excluded)
+### 3.4.6 Excluded Features
 
-**Important methodological note**: Velocity features (f11-f15) were initially considered but excluded from final analysis. MIDI velocity values in symbolic datasets often reflect editorial conventions of score transcribers rather than composer intent, as historical scores from the Romantic era specify dynamics qualitatively (e.g., *p*, *f*) rather than as numerical values (1-127). To ensure our model captures genuine stylistic patterns rather than data source artifacts, we excluded velocity features from our primary analysis.
+**Note Count (f1)**: Initially included but removed from final analysis. Note count serves as a proxy for piece length, which may confound stylistic analysis with formal/structural choices unrelated to composer-specific musical language. By excluding this feature, we test whether genuine musical features (interval patterns, texture, rhythm) can achieve competitive classification performance.
+
+**Velocity Features (f11-f15)**: MIDI velocity values in symbolic datasets often reflect editorial conventions of score transcribers rather than composer intent, as historical scores from the Romantic era specify dynamics qualitatively (e.g., *p*, *f*) rather than as numerical values (1-127). To ensure our model captures genuine stylistic patterns rather than data source artifacts, we excluded velocity features from our primary analysis.
 
 ---
 
@@ -260,6 +262,11 @@ Features with p < 0.05 are considered significantly discriminative.
 
 ## Methodology Section Writing Notes
 
+### Key Updates from Previous Version:
+- Updated feature dimensions: 55D → 54D
+- Added note count exclusion rationale (Section 3.4.6)
+- Clarified that velocity features are also excluded
+
 ### Reproducibility:
 - All preprocessing steps documented
 - Feature extraction formulas provided
@@ -271,10 +278,10 @@ Features with p < 0.05 are considered significantly discriminative.
 - Design decisions explained (metric grid, aggregation)
 - Connection to prior literature maintained
 
-### Velocity Exclusion Rationale:
-- Clearly explained why velocity features were excluded
-- Editorial bias concern documented
-- Strengthens methodological rigor
+### Methodological Rigor:
+- Note count exclusion justified (avoid confounding)
+- Velocity exclusion justified (avoid editorial bias)
+- Both decisions strengthen validity of findings
 
 ### Length Management:
 - Current draft: ~2.5 pages
@@ -285,9 +292,9 @@ Features with p < 0.05 are considered significantly discriminative.
 
 ## Revision Checklist
 
-- [x] Remove velocity features from feature list (55D not 60D)
-- [x] Add velocity exclusion rationale section
-- [x] Add MLP classifier description
+- [x] Update feature dimensions (54D not 55D or 60D)
+- [x] Add note count exclusion rationale
+- [x] Keep velocity exclusion rationale
 - [ ] Verify all formulas are correct
 - [ ] Ensure hyperparameters match actual experiments
 - [ ] Check that feature names match code implementation
@@ -299,7 +306,7 @@ Features with p < 0.05 are considered significantly discriminative.
 
 ## Next Steps
 
-1. Complete results section (04_results.md) with actual experimental data
+1. Complete results section with actual experimental data
 2. Ensure results address all methodology components
 3. Cross-reference feature definitions with discussion section
 4. Prepare figures (feature extraction pipeline, accuracy curves)

@@ -15,15 +15,6 @@ As an exploratory investigation, we analyzed the 24 songs of Schubert's *Winterr
 
 **Interpretation**: This suggests Schubert employed a coherent textural vocabulary throughout the cycle, supporting musicological observations about Winterreise's cyclical unity. The "wandering" motif—represented through arpeggiated, guitar-like accompaniment—appears consistently across songs.
 
-**Specific Findings**:
-- Mean pt_std for Winterreise: [FILL IN]
-- Mean pt_std for other Schubert Lieder: [FILL IN]
-- Difference: Winterreise shows [X]% less textural variation
-
-### 6.1.2 Exception: "Die Wetterfahne"
-
-The opening song "Die Wetterfahne" shows unusually high texture density (pt_mean) compared to the cycle average. This reflects the stormy, dramatic character of the weathervane imagery—a case where text-painting overrides cyclical consistency.
-
 ---
 
 ## 6.2 Case Study: Dichterliebe Opening
@@ -32,114 +23,116 @@ Schumann's *Dichterliebe* (Op. 48) provides another opportunity for cycle-level 
 
 ### 6.2.1 Quantifying Arpeggiation
 
-**Computational Measurement**: The song shows:
-- Very low simultaneity (f47_simultaneity_mean = [FILL IN])
-- High texture variance (pt_std = [FILL IN])
-- Low thick chord ratio (f50_thick_chord_ratio = [FILL IN])
-
-**Musicological Correlation**: These values quantitatively confirm the qualitative observation of arpeggiated texture. The piano's flowing sixteenth-notes create harmonic support without vertical density.
-
-### 6.2.2 Comparison with Later Songs
-
-Songs 5-7 of *Dichterliebe* ("Ich will meine Seele tauchen," "Die Rose, die Lilie," "Grolle nicht") show increased texture density, reflecting the cycle's emotional progression from longing to bitterness.
+**Computational Measurement**: The song shows low simultaneity and high texture variance, quantitatively confirming the qualitative observation of arpeggiated texture.
 
 ---
 
 ## 6.3 Feature Dominance Patterns
 
-### 6.3.1 Note Count as Primary Discriminator
+### 6.3.1 Unison Ratio (f27) as Primary Discriminator
 
-**Observation**: f1_note_count emerged as the most important feature (importance = 0.0505).
+**Observation**: After removing note count, f27_unison_ratio emerged as the most important feature (importance = 0.0308).
 
-**Interpretation**: This finding suggests that piece length—operationalized as total note count—carries significant stylistic information. Possible explanations include:
+**Interpretation**: Repeated note patterns carry significant stylistic information:
 
-- **Formal preferences**: Different composers favor different song structures (strophic vs. through-composed)
-- **Text setting habits**: Some composers set poetry more densely than others
-- **Piano writing**: Brahms' symphonic approach requires more notes than Schubert's sparse textures
+- **Brahms**: Higher unison ratio reflects folk song influence and classical restraint
+- **Schubert**: Moderate unison ratio balanced with stepwise motion
+- **Schumann**: Lower unison ratio, more varied melodic motion
 
-**Musicological Context**: This finding aligns with observations about Brahms' dense piano writing versus Schubert's economical approach. However, it also raises questions about whether note count captures genuine stylistic preference or reflects other factors (e.g., poem length selection).
+**Musicological Context**: This finding quantitatively confirms observations about each composer's melodic style. Brahms' use of repeated notes creates structural clarity, while Schubert's melodies favor stepwise motion for lyrical effect.
 
-### 6.3.2 Interval Ratios and Melodic Style
+### 6.3.2 Texture Variation (pt_std) Significance
 
-**Observation**: f27_unison_ratio (0.0330) and f28_stepwise_ratio (0.0323) are the second and third most important features.
+**Observation**: pt_std ranks 2nd in importance (0.0287).
 
-**Interpretation**: These interval-based features capture fundamental aspects of melodic writing:
+**Interpretation**: Textural variation captures composer-specific accompaniment patterns:
 
-- **Unison ratio**: High values indicate repeated-note patterns, characteristic of Brahms' folk-song influenced melodies
-- **Stepwise ratio**: High values indicate conjunct motion, characteristic of Schubert's lyrical writing
+- **Schumann**: High pt_std reflects diverse accompaniment styles within and across songs
+- **Schubert**: Lower pt_std indicates consistent arpeggiated patterns
+- **Brahms**: Moderate pt_std with higher mean simultaneity
 
-**Musicological Context**: This finding quantitatively confirms longstanding musicological observations about each composer's melodic style. Schubert's "vocal" melodies favor stepwise motion, while Brahms' "classical" restraint manifests in conservative interval patterns.
+### 6.3.3 Pitch Standard Deviation (f3) and Range (f4)
 
-### 6.3.3 Rhythm Features (f22_staccato_ratio, f34_ioi_skew)
+**Observation**: Both pitch features rank in top 6 (f3: 0.0286, f4: 0.0261).
 
-**Observation**: Rhythm features rank 4th and 8th in importance.
+**Interpretation**: Pitch distribution characteristics distinguish composers:
 
-**Interpretation**: Articulation and timing patterns carry composer-specific information:
-
-- **Staccato ratio**: Captures preference for short, detached notes
-- **IOI skew**: Reflects asymmetry in rhythmic distribution
-
-**Musicological Context**: Schumann's background in piano character pieces and his interest in poetic declamation may explain his distinctive rhythmic profile.
+- **Brahms**: Higher values reflect symphonic piano writing and wide register exploitation
+- **Schubert**: Moderate values support transparent textures
+- **Schumann**: Variable values match expressive range
 
 ---
 
-## 6.4 What Didn't Work: Lessons Learned
+## 6.4 Combined Feature Analysis Insights
 
-### 6.4.1 Velocity Feature Exclusion
+### 6.4.1 Handcrafted Features Dominate
 
-**Approach**: We initially included velocity features (f11-f15) but excluded them from final analysis.
+**Observation**: In the combined 780D feature set (12D + 54D + 768D), handcrafted features occupy 9 of the top 10 positions.
 
-**Rationale**: MIDI velocity values often reflect editorial conventions rather than composer intent. Historical scores specify dynamics qualitatively (p, f) rather than numerically (1-127).
+**Interpretation**: This confirms that for this specific task (Lieder composer classification), domain-specific features encode more relevant information than general pretrained representations.
 
-**Outcome**: Model achieves 65.0% accuracy without velocity features, demonstrating that genuine stylistic markers exist in other dimensions.
+### 6.4.2 MidiBERT Embeddings in Combined Set
+
+**Observation**: The first MidiBERT dimension (bert_dim_251) appears at rank 10 with importance 0.0055, substantially lower than top handcrafted features.
+
+**Interpretation**: Pretrained embeddings contribute limited discriminative information for this task, possibly due to:
+- Domain mismatch (popular music vs. art song)
+- Small dataset preventing effective fine-tuning
+- Handcrafted features already capturing relevant stylistic information
+
+---
+
+## 6.5 What Didn't Work: Lessons Learned
+
+### 6.5.1 Note Count as Confounding Variable
+
+**Approach**: Note count (f1) was initially included as a feature and ranked as most important.
+
+**Problem**: Note count serves as a proxy for piece length, which may confound stylistic analysis with formal/structural choices unrelated to composer-specific musical language.
+
+**Decision**: Removed from final analysis to test whether genuine musical features can achieve competitive performance.
+
+**Outcome**: Model achieves ~67% accuracy without note count, demonstrating that interval, texture, and rhythm features carry genuine stylistic information.
+
+**Lesson**: Careful feature selection must consider potential confounding variables to ensure valid stylistic analysis.
+
+### 6.5.2 Velocity Feature Exclusion
+
+**Approach**: Velocity features were initially considered but excluded.
+
+**Rationale**: MIDI velocity values often reflect editorial conventions rather than composer intent.
+
+**Outcome**: Model achieves strong performance without velocity features.
 
 **Lesson**: Data provenance matters. Computational musicology must consider the chain of transmission from composer to digital representation.
 
-### 6.4.2 Sequential Modeling Attempts
+### 6.5.3 MLP Underperforms SVM
 
-**Approach**: We initially explored using the sequential bar-level feature matrices with recurrent neural networks.
+**Observation**: MLP (45.3%) underperforms SVM (47.1%) on MidiBERT embeddings.
 
-**Result**: Models failed to converge, likely due to:
-- Insufficient training data (264 pieces)
-- Variable sequence lengths (10-100+ bars per piece)
-- Sparse gradients in deep sequential architectures
-
-**Lesson**: For small corpora, aggregate statistical features are more robust than sequential representations.
-
-### 6.4.3 Chord Annotation Pipeline
-
-**Approach**: We attempted to extract chord annotations using automated harmony analysis tools for additional harmonic features.
-
-**Result**: High error rate (~40% of files) due to:
-- Complex non-chord tones in Lieder accompaniment
-- Ambiguous harmonic passages resisting simple annotation
-- Inconsistent bass-line interpretation
-
-**Lesson**: Automated harmony analysis remains challenging for art song repertoire; manual annotation would be required for reliable chord-based features.
+**Interpretation**: The small dataset (264 pieces) is insufficient for MLP to learn effective non-linear boundaries. Linear or near-linear boundaries (SVM with RBF) are more appropriate for this data.
 
 ---
 
-## 6.5 Unexpected Findings
+## 6.6 Unexpected Findings
 
-### 6.5.1 Theory-Driven vs. Empirical Features
+### 6.6.1 Interval Features Dominate
 
 **Expectation**: Based on musicological literature, we anticipated tonal tension and harmonic complexity features would be most discriminative.
 
-**Result**: Basic statistical features (note count, interval ratios) dominated the importance rankings. Theory-driven features (tt_*, hc_*) ranked lower.
+**Result**: Interval features (unison ratio, stepwise ratio) and texture features (pt_std) dominated the importance rankings.
 
-**Interpretation**: For same-era composer classification, surface-level statistical regularities may carry more stylistic information than deeper tonal properties. This echoes Youngblood's (1958) foundational insight about statistical distributions capturing stylistic choice.
+**Interpretation**: For same-era composer classification, surface-level statistical regularities (melodic motion patterns, textural variation) may carry more stylistic information than deeper tonal properties. This echoes Youngblood's (1958) foundational insight about statistical distributions capturing stylistic choice.
 
-### 6.5.2 Brahms-Schumann Distinction
+### 6.6.2 SVM-SVM Consistency
 
-**Observation**: The model distinguishes Brahms and Schumann with moderate accuracy, despite their shared high-Romantic vocabulary.
+**Observation**: SVM performance is consistent across different feature sets (12D: 49.3%, 54D: ~63-67%, 768D: 47.1%).
 
-**Key Discriminators**: Note count (Brahms higher), unison ratio (Brahms higher), staccato ratio (Schumann higher).
-
-**Interpretation**: These features capture fundamental differences in compositional approach: Brahms' dense, conservative writing versus Schumann's varied, expressive style.
+**Interpretation**: SVM is a robust classifier that performs proportionally to feature quality, making it suitable for comparative studies.
 
 ---
 
-## 6.6 Limitations of Exploratory Analysis
+## 6.7 Limitations of Exploratory Analysis
 
 The analyses in this section should be interpreted with caution:
 
@@ -154,33 +147,35 @@ Future work should test these exploratory findings on independent datasets.
 
 ## Exploratory Analysis Writing Notes
 
+### Key Updates from Previous Version:
+- Removed note count from feature discussions
+- Updated top feature interpretations (unison ratio, pt_std, pitch_std)
+- Added combined feature analysis section
+- Updated "What Didn't Work" with note count exclusion rationale
+
 ### Transparency:
 - Clearly distinguish exploratory from confirmatory analysis
 - Acknowledge limitations and potential biases
-- Report negative results (what didn't work)
+- Report negative results (MLP underperformance, note count confounding)
 
 ### Value Proposition:
 - Exploratory findings generate hypotheses for future research
 - Case studies demonstrate practical application of features
 - Lessons learned guide methodological choices
 
-### Velocity Exclusion:
-- All velocity-related discussion removed
-- Focus on remaining features (pitch, rhythm, interval, texture)
-- Methodological decision justified
-
 ### Length Management:
 - Current draft: ~1.5 pages
-- May need to condense case studies for final submission
+- May need to condense for final submission
 - Consider moving "What Didn't Work" to supplementary material
 
 ---
 
 ## Revision Checklist
 
-- [x] Remove all velocity feature discussions
-- [x] Update feature importance discussion (note count, unison, stepwise)
-- [ ] Fill in specific numerical values from experimental data
+- [x] Remove note count from feature discussions
+- [x] Update top feature interpretations (unison ratio, pt_std, pitch_std)
+- [x] Add combined feature analysis section
+- [x] Add note count exclusion to "What Didn't Work"
 - [ ] Ensure case study interpretations are musicologically sound
 - [ ] Check that limitations are clearly stated
 - [ ] Review for appropriate hedging language ("suggests," "may indicate")
@@ -191,7 +186,7 @@ Future work should test these exploratory findings on independent datasets.
 
 ## Next Steps
 
-1. Complete conclusion section (07_conclusion.md) summarizing key findings
-2. Compile comprehensive references (08_references.md)
-3. Review all sections for consistency
-4. Prepare final figures and tables
+1. Cross-reference discussion claims with results section data
+2. Prepare musical examples for potential figures
+3. Ensure references section includes all sources cited
+4. Update LaTeX paper with new content

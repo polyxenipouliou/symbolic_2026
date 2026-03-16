@@ -2,7 +2,7 @@
 
 ## Abstract
 
-This project investigates whether individual composer style can be captured through computational analysis of symbolic music representations. We propose a three-layer feature framework combining **tonal tension** (Spiral Array Model), **harmonic complexity** (pitch class entropy), and **pianistic texture** (onset density) to classify Lieder by Franz Schubert, Robert Schumann, and Johannes Brahms. Our experiments demonstrate that carefully designed handcrafted features (55 dimensions, velocity features excluded to avoid editorial bias) achieve 65.0% balanced accuracy using a Support Vector Machine classifier, with peak performance of ~70% using only the top 21 features. This significantly outperforms pretrained transformer embeddings (45.3% for MidiBERT-768D with MLP) on this limited corpus of 264 pieces.
+This project investigates whether individual composer style can be captured through computational analysis of symbolic music representations. We propose a three-layer feature framework combining **tonal tension** (Spiral Array Model), **harmonic complexity** (pitch class entropy), and **pianistic texture** (onset density) to classify Lieder by Franz Schubert, Robert Schumann, and Johannes Brahms. Our experiments demonstrate that carefully designed handcrafted features (54 dimensions, excluding note count and velocity to avoid confounding variables) achieve approximately 67% balanced accuracy using a Support Vector Machine classifier with feature selection. This significantly outperforms both SVM (47.1%) and MLP (45.3%) classifiers on 768-dimensional pretrained transformer embeddings from Adversarial-MidiBERT on our 264-piece corpus.
 
 ## Dataset
 
@@ -26,20 +26,23 @@ Derived from the three-layer theoretical framework:
 - **Melodic Contour** (`mc_mean`, `mc_std`, `mc_entropy`): Interval succession statistics
 - **Pianistic Texture** (`pt_mean`, `pt_std`, `pt_entropy`): Onset density per beat
 
-### 2. Handmade Features (55D)
-Comprehensive statistical descriptors across four musical dimensions. **Note:** Velocity features (f11-f15) were excluded to avoid editorial bias in MIDI transcriptions.
+### 2. Handmade Features (54D)
+Comprehensive statistical descriptors across four musical dimensions. **Note:** Note count (piece length proxy) and velocity features were excluded to avoid confounding variables and editorial bias.
 
 | Category | Features | Count | Musical Interpretation |
 |----------|----------|-------|----------------------|
-| Pitch | f1-f10 | 10 | Range, register preference, pitch class distribution |
+| Pitch | f2-f10 | 9 | Range, register preference, pitch class distribution |
 | Rhythm/Duration | f16-f23 | 8 | Note density, articulation (staccato/legato) |
 | Intervals | f24-f30, f52-f60 | 17 | Melodic motion preferences (stepwise vs. leaps) |
 | Texture | f47-f50 | 4 | Chord thickness, simultaneity |
 | Higher-order | f31-f34, f35-f46 | 16 | Skewness, kurtosis, pitch class histogram |
-| **Total** | | **55** | |
+| **Total** | | **54** | |
 
 ### 3. MidiBERT Embeddings (768D)
 Pre-trained transformer representations extracted using [Adversarial-MidiBERT](https://github.com/RS2002/Adversarial-MidiBERT).
+
+### 4. Combined Features (780D)
+Concatenation of 12D statistical + 54D handmade + 768D MidiBERT embeddings.
 
 ## Installation
 
@@ -67,9 +70,9 @@ pip install torch transformers
 
 ### Feature Extraction
 
-**Extract 55D Handmade Features (no velocity):**
+**Extract 54D Handmade Features:**
 ```bash
-python 60.py  # Note: velocity features excluded in analysis
+python 54.py
 ```
 
 **Extract MidiBERT Embeddings:**
@@ -85,9 +88,14 @@ python get_feature.py
 python 12.py
 ```
 
-**Handmade Features (55D, no velocity):**
+**Handmade Features (54D):**
 ```bash
 python see_importance.py  # Feature selection + SVM classification
+```
+
+**MidiBERT Embeddings (768D) with SVM:**
+```bash
+python 768classificationmean.py
 ```
 
 **MidiBERT Embeddings (768D) with MLP:**
@@ -95,10 +103,10 @@ python see_importance.py  # Feature selection + SVM classification
 python training.py  # MLP classification
 ```
 
-**Combined Features (12+55=67D):**
+**Combined Features (12+54+768=780D):**
 ```bash
-python conbine_features.py  # Merge features first
-python see_importance.py    # Feature selection + classification
+# Features merged in feature_12+54+768.csv
+python see_importance.py  # Feature selection + classification
 ```
 
 ### Analysis
@@ -117,34 +125,37 @@ python see_importance.py
 
 ### Classification Performance (Balanced Accuracy)
 
-| Feature Set | Dimensions | Balanced Accuracy | Std Dev | Notes |
-|-------------|------------|-------------------|---------|-------|
-| Statistical (12D) | 12 | 49.3% | 4.7% | Theory-driven only |
-| Handmade (55D, no vel) | 55 | **65.0%** | 5.6% | All features |
-| Handmade (21D, top) | 21 | **~70%** | ~5% | Feature selection |
-| MidiBERT (768D) + MLP | 768 | 45.3% | - | Pretrained embeddings |
+| Feature Set | Dimensions | Classifier | Balanced Accuracy | Std Dev | Notes |
+|-------------|------------|------------|-------------------|---------|-------|
+| Statistical (12D) | 12 | SVM | 49.3% | 4.7% | Theory-driven only |
+| Handmade (54D) | 54 | SVM | ~63% | ~6% | All features |
+| Handmade (20D, top) | 20 | SVM | **~67%** | ~5% | Feature selection |
+| MidiBERT (768D) | 768 | SVM | 47.1% | 2.5% | Pretrained embeddings |
+| MidiBERT (768D) | 768 | MLP | 45.3% | - | Pretrained embeddings |
+| Combined (780D) | 780 | SVM | TBD | TBD | All features |
 
 ### Key Findings
 
-1. **Handcrafted features outperform pretrained embeddings** on small datasets (65.0% vs 45.3%)
-2. **Top discriminative features**: note count (f1), unison ratio (f27), stepwise ratio (f28), staccato ratio (f22), pitch std (f3)
-3. **Optimal feature subset**: ~21 features achieve peak performance (~70%)
-4. **Velocity features excluded** to avoid editorial bias in MIDI transcriptions
+1. **Handcrafted features outperform pretrained embeddings** on small datasets (~67% vs 47.1%)
+2. **Top discriminative features**: unison ratio (f27), texture std (pt_std), pitch std (f3), stepwise ratio (f28), melodic contour std (mc_std)
+3. **Optimal feature subset**: ~20 features achieve peak performance (~67%)
+4. **Note count and velocity excluded** to avoid confounding variables and editorial bias
+5. **SVM outperforms MLP** on MidiBERT embeddings (47.1% vs 45.3%)
 
-### Top 10 Most Important Features (Random Forest Importance, 55D no velocity)
+### Top 10 Most Important Features (Random Forest Importance, 54D)
 
 | Rank | Feature | Importance | Category | Musical Meaning |
 |------|---------|------------|----------|-----------------|
-| 1 | f1_note_count | 0.0505 | Pitch | Total note count (piece length) |
-| 2 | f27_unison_ratio | 0.0330 | Interval | Repeated notes in melody |
-| 3 | f28_stepwise_ratio | 0.0323 | Interval | Stepwise melodic motion |
-| 4 | f22_staccato_ratio | 0.0315 | Rhythm | Short note proportion |
-| 5 | f3_pitch_std | 0.0306 | Pitch | Pitch range dispersion |
-| 6 | f24_interval_mean | 0.0306 | Interval | Average melodic interval size |
-| 7 | f4_pitch_range | 0.0305 | Pitch | Total pitch span |
-| 8 | f34_ioi_skew | 0.0289 | Rhythm | IOI distribution asymmetry |
-| 9 | f5_unique_pitches | 0.0281 | Pitch | Number of unique pitches |
-| 10 | f25_interval_std | 0.0270 | Interval | Interval size variation |
+| 1 | f27_unison_ratio | 0.0308 | Interval | Repeated notes in melody |
+| 2 | pt_std | 0.0287 | Texture | Texture variation |
+| 3 | f3_pitch_std | 0.0286 | Pitch | Pitch range dispersion |
+| 4 | f28_stepwise_ratio | 0.0280 | Interval | Stepwise melodic motion |
+| 5 | mc_std | 0.0272 | Melody | Melodic contour variation |
+| 6 | f4_pitch_range | 0.0261 | Pitch | Total pitch span |
+| 7 | f22_staccato_ratio | 0.0259 | Rhythm | Short note proportion |
+| 8 | f24_interval_mean | 0.0243 | Interval | Average melodic interval size |
+| 9 | f8_most_common_pc_ratio | 0.0239 | Pitch | Most common pitch class ratio |
+| 10 | f25_interval_std | 0.0238 | Interval | Interval size variation |
 
 ## Project Structure
 
@@ -153,7 +164,7 @@ symbolic_2026/
 ├── README.md                    # This file
 ├── 12.py                        # Statistical features classification
 ├── 30.py                        # 30D handmade feature extraction
-├── 60.py                        # 60D (55D used) handmade feature extraction
+├── 54.py                        # 54D handmade feature extraction
 ├── 768classificationmean.py     # MidiBERT classification with SVM
 ├── training.py                  # MLP classification
 ├── conbine_features.py          # Feature merging
@@ -186,18 +197,22 @@ symbolic_2026/
 - Moderate harmonic complexity supports text expression
 
 **Robert Schumann:**
-- Higher rhythm variance (f22_staccato_ratio) indicates varied articulation
-- Lower simultaneity suggests arpeggiated piano textures
+- Higher texture variation (pt_std) indicates diverse accompaniment patterns
+- Higher staccato ratio (f22) suggests varied articulation
 - Complex rhythmic patterns reflect poetic declamation
 
 **Johannes Brahms:**
-- Higher pitch range (f4) and note density (f1) indicate richer textures
+- Higher pitch range (f4) indicates richer textures
 - Conservative interval patterns (f27_unison_ratio) reflect classical influence
-- Dense chordal writing (f50_thick_chord_ratio) shows symphonic piano writing
+- Dense chordal writing shows symphonic piano writing
 
-## Velocity Feature Exclusion
+## Methodological Notes
 
-**Important Methodological Note:** This study explicitly excludes velocity features (f11-f15) from analysis. MIDI velocity values in symbolic datasets often reflect editorial conventions of score transcribers rather than composer intent, as historical scores from the Romantic era specify dynamics qualitatively (e.g., `p`, `f`) rather than as numerical values (1-127). To ensure our model captures genuine stylistic patterns rather than data source artifacts, velocity features were excluded from all primary analyses.
+### Note Count Exclusion
+Note count (f1) was initially included as a feature but was removed because it serves as a proxy for piece length, which may confound stylistic analysis with formal/structural choices unrelated to composer-specific musical language.
+
+### Velocity Feature Exclusion
+Velocity features (f11-f15) were excluded because MIDI velocity values in symbolic datasets often reflect editorial conventions of score transcribers rather than composer intent. Historical scores from the Romantic era specify dynamics qualitatively (e.g., *p*, *f*) rather than as numerical values (1-127).
 
 ## Citation
 

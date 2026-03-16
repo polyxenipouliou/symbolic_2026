@@ -12,7 +12,7 @@ from sklearn.ensemble import RandomForestClassifier
 # 1. Data Loading and Robust Preprocessing
 # ==========================================
 # Load the dataset from the specified path
-df = pd.read_csv(r'E:\Master\symbolic_2026\feature_12+55.csv')
+df = pd.read_csv(r'E:\Master\symbolic_2026\feature_12+54+768.csv')
 
 # Exclude data related to 'Clara Schumann' to focus on other composers
 df = df[df['composer'] != 'Clara Schumann'].copy()
@@ -128,7 +128,7 @@ output_data = {
     "incremental_steps": results_history
 }
 
-json_filename = 'feature_selection_results_12+55.json'
+json_filename = 'feature_selection_results_12+54+768.json'
 with open(json_filename, 'w', encoding='utf-8') as f:
     json.dump(output_data, f, indent=4, ensure_ascii=False)
 
@@ -164,5 +164,5 @@ plt.xlabel('Number of Top Features')
 plt.ylabel('Balanced Accuracy')
 plt.legend()
 plt.grid(True, alpha=0.3)
-plt.savefig('feature_accuracy_curve_12+55.png', dpi=300)
+plt.savefig('feature_accuracy_curve_12+54+768.png', dpi=300)
 plt.show()

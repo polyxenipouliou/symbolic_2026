@@ -3,13 +3,13 @@ import os
 
 # 1. Define file paths
 file_paths = {
-    # "bert": r"E:\Master\symbolic_2026\Adversarial-MidiBERT\midibert_768d_features.csv",
-    "features": r"E:\Master\symbolic_2026\handmade_55_features.csv",
+    "bert": r"E:\Master\symbolic_2026\Adversarial-MidiBERT\midibert_768d_features.csv",
+    "features": r"E:\Master\symbolic_2026\handmade_54_features.csv",
     "stats": r"E:\Master\symbolic_2026\features\filtered_features_statistical.csv"
 }
 
 # Define output path
-output_path = r"E:\Master\symbolic_2026\feature_12+55.csv"
+output_path = r"E:\Master\symbolic_2026\feature_12+54+768.csv"
 
 
 def merge_music_data(files, save_to):
@@ -17,16 +17,16 @@ def merge_music_data(files, save_to):
 
     # Read the first file as the base table
     # Assumes each file contains at least 'filename' and 'composer' columns
-    # df_bert = pd.read_csv(files["bert"])
+    df_bert = pd.read_csv(files["bert"])
     df_feat = pd.read_csv(files["features"])
     df_stat = pd.read_csv(files["stats"])
 
     # 2. Execute merge logic (use inner join to keep only filenames present in all datasets)
     # Merge based on both 'filename' and 'composer' to avoid duplicate composer columns
-    # merged_df = pd.merge(df_bert, df_feat, on=["filename", "composer"], how="inner")
+    merged_df = pd.merge(df_bert, df_feat, on=["filename", "composer"], how="inner")
 
     # Then merge with stats
-    final_df = pd.merge(df_feat, df_stat, on=["filename", "composer"], how="inner")
+    final_df = pd.merge(merged_df, df_stat, on=["filename", "composer"], how="inner")
 
     # 3. Apply filtering logic: Exclude data from "Clara Schumann"
     if "composer" in final_df.columns:

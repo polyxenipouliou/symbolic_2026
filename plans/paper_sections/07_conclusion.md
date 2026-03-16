@@ -9,15 +9,15 @@
 
 This exploratory study investigated whether computational features can capture individual composer style in German Lieder. Our key findings are:
 
-**Finding 1: Handcrafted features outperform pretrained embeddings.** The 55-dimensional handcrafted feature set (velocity features excluded) achieved 65.0% balanced accuracy with SVM, significantly outperforming 768-dimensional MidiBERT embeddings with MLP classifier (45.3%) on our 264-piece corpus. This result challenges assumptions about the universal superiority of deep learning approaches and highlights the value of domain-specific feature engineering for small, specialized datasets.
+**Finding 1: Handcrafted features outperform pretrained embeddings.** The 54-dimensional handcrafted feature set (excluding note count and velocity) achieved approximately 67% balanced accuracy with feature selection (top 20 features), significantly outperforming both SVM (47.1%) and MLP (45.3%) classifiers on 768-dimensional MidiBERT embeddings on our 264-piece corpus. This result challenges assumptions about the universal superiority of deep learning approaches and highlights the value of domain-specific feature engineering for small, specialized datasets.
 
-**Finding 2: Note count and interval features are most discriminative.** Contrary to our initial hypotheses emphasizing harmonic features, note count (f1), unison ratio (f27), and stepwise ratio (f28) emerged as the most important features. This suggests that structural properties (piece length) and melodic motion patterns carry more composer-specific information than harmonic characteristics in the Lieder genre.
+**Finding 2: Interval and texture features are most discriminative.** After removing note count (which was previously the most important feature), unison ratio (f27), texture variation (pt_std), and pitch standard deviation (f3) emerged as the most important features. This suggests that melodic motion patterns and textural variation carry genuine composer-specific information independent of piece length.
 
-**Finding 3: Compact feature subsets are sufficient.** Classification accuracy peaked at approximately 21 features (~70%), with no significant improvement from including additional dimensions. This finding has practical implications for feature selection in similar tasks and suggests that composer style may be captured by a relatively small set of musical attributes.
+**Finding 3: Compact feature subsets are sufficient.** Classification accuracy peaked at approximately 20 features (~67%), with no significant improvement from including additional dimensions. This finding has practical implications for feature selection in similar tasks and suggests that composer style may be captured by a relatively small set of musical attributes.
 
-**Finding 4: Theory-driven features show moderate discriminability.** ANOVA analysis confirmed that multiple features across pitch, interval, rhythm, and texture categories show statistically significant between-composer variance (p < 0.05), validating our feature design approach.
+**Finding 4: Theory-driven features show moderate discriminability.** ANOVA analysis confirmed that multiple features across interval, texture, pitch, and rhythm categories show statistically significant between-composer variance (p < 0.05), validating our feature design approach.
 
-**Finding 5: Velocity features can be excluded without performance loss.** Our decision to exclude velocity features to avoid editorial bias did not prevent the model from achieving meaningful classification accuracy. This demonstrates that genuine stylistic markers exist in other musical dimensions.
+**Finding 5: Methodological exclusions strengthen validity.** By excluding note count (confounding variable) and velocity features (editorial bias), we demonstrate that genuine stylistic markers exist in other musical dimensions, and that classification is based on composer-intentioned patterns rather than artifacts.
 
 ---
 
@@ -27,11 +27,11 @@ Returning to the contributions outlined in Section 1:
 
 1. **Multi-layer Feature Framework**: We demonstrated that combining tonal tension, harmonic complexity, and pianistic texture provides a theoretically grounded approach to composer classification, with empirical validation through ANOVA and feature importance analysis.
 
-2. **Systematic Comparison**: Our head-to-head comparison of handcrafted vs. pretrained features provides evidence that domain knowledge encoded in feature design can compensate for—and even surpass—large pretrained representations when data is limited.
+2. **Systematic Comparison**: Our head-to-head comparison of handcrafted features (54D) against pretrained transformer embeddings (768D MidiBERT) with both SVM and MLP classifiers provides evidence that domain knowledge encoded in feature design can compensate for—and even surpass—large pretrained representations when data is limited.
 
-3. **Feature Importance Analysis**: The identification of note count and interval features as most discriminative offers new hypotheses for musicological investigation into composer style.
+3. **Feature Importance Analysis**: The identification of unison ratio, texture variation, and pitch standard deviation as most discriminative offers new hypotheses for musicological investigation into composer style.
 
-4. **Velocity Feature Exclusion**: We demonstrated that excluding velocity features due to editorial bias concerns is methodologically sound and does not compromise classification performance.
+4. **Methodological Rigor**: We explicitly exclude note count and velocity features to avoid confounding variables and editorial bias, demonstrating that classification can achieve meaningful accuracy based on genuine musical features alone.
 
 5. **Reproducible Pipeline**: All code, features, and experimental configurations are publicly available, supporting reproducible research in computational musicology.
 
@@ -45,11 +45,11 @@ This study has several important limitations:
 
 **Composer Coverage**: We focused on three canonical composers. Generalizability to other Lieder composers (Wolf, Strauss, Mahler) remains untested.
 
-**Feature Scope**: Our feature set captures pitch, rhythm, dynamics, and texture but omits chord function, voice-leading quality, and formal structure—dimensions that musicologists consider important for style analysis.
+**Feature Scope**: Our feature set captures pitch, rhythm, and texture but omits chord function, voice-leading quality, and formal structure—dimensions that musicologists consider important for style analysis.
 
 **Symbolic Data Quality**: All features depend on the accuracy of source editions and digital transcriptions. Editorial variations may introduce systematic biases.
 
-**Velocity Exclusion**: While methodologically justified, excluding velocity features means our analysis does not capture dynamic expression patterns that may carry stylistic information.
+**Note Count and Velocity Exclusion**: While methodologically justified, excluding these features means our analysis does not capture piece length preferences or dynamic expression patterns that may carry stylistic information.
 
 **Exploratory Nature**: As an exploratory study, findings should be treated as hypothesis-generating rather than definitive conclusions.
 
@@ -101,7 +101,7 @@ This study contributes to ongoing discussions about the role of computational me
 
 **Interpretability Matters**: Handcrafted features offer direct musicological interpretation, enabling dialogue between computational findings and theoretical understanding. Black-box models, while powerful, obscure this connection.
 
-**Methodological Rigor**: The exclusion of velocity features demonstrates the importance of considering data provenance and potential confounding variables in computational musicology research.
+**Methodological Rigor**: The exclusion of note count and velocity features demonstrates the importance of considering confounding variables and data provenance in computational musicology research.
 
 **Exploratory Computing**: Computational analysis need not provide definitive answers to be valuable. As hypothesis generators, computational methods can suggest new avenues for traditional musicological research.
 
@@ -111,7 +111,7 @@ This study contributes to ongoing discussions about the role of computational me
 
 ## 7.6 Concluding Remarks
 
-The question posed in our introduction—whether computational methods can capture the subtle stylistic fingerprints that distinguish Schubert, Schumann, and Brahms—receives a qualified affirmative answer. Our 55-dimensional feature set achieves classification accuracy substantially above chance, and feature importance analysis reveals patterns that align with (and occasionally challenge) musicological understanding.
+The question posed in our introduction—whether computational methods can capture the subtle stylistic fingerprints that distinguish Schubert, Schumann, and Brahms—receives a qualified affirmative answer. Our 54-dimensional feature set achieves classification accuracy substantially above chance (~67%), and feature importance analysis reveals patterns that align with (and occasionally challenge) musicological understanding.
 
 However, the goal of this research is not automated attribution but enhanced understanding. By quantifying aspects of musical style, we create new tools for asking old questions: What makes Schubert's melodies distinctive? How does Schumann's piano writing differ from Brahms'? Can we measure the intuitive sense of stylistic identity that performers and scholars recognize?
 
@@ -120,6 +120,12 @@ The answers emerging from this computational exploration are provisional and inc
 ---
 
 ## Conclusion Writing Notes
+
+### Key Updates from Previous Version:
+- Updated accuracy numbers (~67%, 47.1%, 45.3%)
+- Updated top features (unison ratio, pt_std, pitch_std)
+- Added note count exclusion to methodology discussion
+- Added methodological rigor to contributions
 
 ### Tone:
 - Confident but measured claims
@@ -131,9 +137,9 @@ The answers emerging from this computational exploration are provisional and inc
 - Each section builds toward broader significance
 
 ### Key Messages:
-- Handcrafted features work for small corpora (65.0% vs 45.3%)
-- Note count and interval features are most important
-- Velocity exclusion is methodologically sound
+- Handcrafted features work for small corpora (~67% vs 47.1%/45.3%)
+- Interval and texture features are most important
+- Methodological exclusions (note count, velocity) strengthen validity
 - Interpretability enables musicological dialogue
 - Computational methods as hypothesis generators
 
@@ -146,11 +152,10 @@ The answers emerging from this computational exploration are provisional and inc
 
 ## Revision Checklist
 
-- [x] Update accuracy numbers (65.0%, ~70%, 45.3%)
-- [x] Update top features (note count, unison ratio, stepwise ratio)
-- [x] Remove velocity feature mentions
-- [x] Add velocity exclusion to contributions and limitations
-- [x] Add GroupKFold to future work
+- [x] Update accuracy numbers (~67%, 47.1%, 45.3%)
+- [x] Update top features (unison ratio, pt_std, pitch_std)
+- [x] Add note count exclusion discussion
+- [x] Add methodological rigor to contributions
 - [ ] Verify all claims are supported by results section
 - [ ] Ensure limitations are comprehensive and honest
 - [ ] Check that future work is specific and actionable
@@ -162,7 +167,7 @@ The answers emerging from this computational exploration are provisional and inc
 
 ## Next Steps
 
-1. Compile comprehensive references section (08_references.md)
+1. Compile comprehensive references section
 2. Review all sections for internal consistency
 3. Prepare final figures and tables
 4. Create assembly instructions for final paper
