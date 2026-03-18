@@ -146,11 +146,6 @@ python get_feature.py
 python scripts/12.py
 ```
 
-**Handcrafted Features (54-60D) with SVM:**
-```bash
-python scripts/30.py
-```
-
 **MidiBERT Embeddings (768D) with SVM:**
 ```bash
 python scripts/768classificationmean.py
@@ -192,7 +187,6 @@ python scripts/conbine_features.py
 | Feature Set | Dimensions | Classifier | Balanced Accuracy | Std Dev |
 |-------------|------------|------------|-------------------|---------|
 | Statistical (12D) | 12 | SVM (RBF, balanced) | **49.35%** | 4.65% |
-| Handcrafted (54-60D) | 54-60 | SVM (RBF, C=5.0) | ~47% | - |
 | MidiBERT (768D) | 768 | SVM (RBF, C=5.0) | 47.09% | 2.52% |
 | MidiBERT (768D) | 768 | MLP (128,64, α=0.01) | 45.28% | - |
 
@@ -241,7 +235,6 @@ who_wrote_this_lied-main/
 ├── scripts/
 │   ├── 12.py                    # 12D feature classification (SVM)
 │   ├── 30.py                    # 30D feature classification
-│   ├── 54.py                    # 54/60D feature extraction & classification
 │   ├── 768classificationmean.py # MidiBERT classification (SVM)
 │   ├── mlptraining.py           # MLP classification
 │   ├── anova_12.py              # ANOVA discriminability analysis
@@ -251,7 +244,7 @@ who_wrote_this_lied-main/
 ├── result/
 │   ├── results_12.txt           # 12D SVM results
 │   ├── results_768.txt          # 768D SVM results
-│   ├── results_768-3.txt        # 768D SVM results (run 3)
+│   ├── results_768-3.txt        # 768D SVM results (BMP dataset)
 │   ├── 768_mlp_results.txt      # MLP classification results
 │   ├── midibert_svm_evaluation_results.txt
 │   ├── confusion_matrix_svm.png
