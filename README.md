@@ -130,10 +130,7 @@ pip install torch transformers
 
 ### Feature Extraction
 
-**Extract 54-60D Handcrafted Features:**
-```bash
-python scripts/54.py
-```
+
 
 **Extract MidiBERT Embeddings:**
 ```bash
