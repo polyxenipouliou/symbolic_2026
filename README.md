@@ -1,4 +1,4 @@
-# Composer Fingerprinting: A Multi-Layer Feature Approach for Lieder Authorship Attribution
+# Who Wrote this Lied? A Computational Approach to Lied Classification and Composer Fingerprinting
 
 ## Abstract
 
@@ -101,34 +101,13 @@ python see_importance.py
 | Feature Set | Dimensions | Classifier | Balanced Accuracy | Std Dev | Notes |
 |-------------|------------|------------|-------------------|---------|-------|
 | Statistical (12D) | 12 | SVM | 49.3% | 4.7% | Theory-driven only |
-| Handmade (54D) | 54 | SVM | ~63% | ~6% | All features |
-| Handmade (20D, top) | 20 | SVM | **~67%** | ~5% | Feature selection |
 | MidiBERT (768D) | 768 | SVM | 47.1% | 2.5% | Pretrained embeddings |
 | MidiBERT (768D) | 768 | MLP | 45.3% | - | Pretrained embeddings |
-| Combined (780D) | 780 | SVM | TBD | TBD | All features |
 
 ### Key Findings
 
-1. **Handcrafted features outperform pretrained embeddings** on small datasets (~67% vs 47.1%)
-2. **Top discriminative features**: unison ratio (f27), texture std (pt_std), pitch std (f3), stepwise ratio (f28), melodic contour std (mc_std)
-3. **Optimal feature subset**: ~20 features achieve peak performance (~67%)
-4. **Note count and velocity excluded** to avoid confounding variables and editorial bias
-5. **SVM outperforms MLP** on MidiBERT embeddings (47.1% vs 45.3%)
-
-### Top 10 Most Important Features (Random Forest Importance, 54D)  NEEDS UPDATE!!!
-
-| Rank | Feature | Importance | Category | Musical Meaning |
-|------|---------|------------|----------|-----------------|
-| 1 | f27_unison_ratio | 0.0308 | Interval | Repeated notes in melody |
-| 2 | pt_std | 0.0287 | Texture | Texture variation |
-| 3 | f3_pitch_std | 0.0286 | Pitch | Pitch range dispersion |
-| 4 | f28_stepwise_ratio | 0.0280 | Interval | Stepwise melodic motion |
-| 5 | mc_std | 0.0272 | Melody | Melodic contour variation |
-| 6 | f4_pitch_range | 0.0261 | Pitch | Total pitch span |
-| 7 | f22_staccato_ratio | 0.0259 | Rhythm | Short note proportion |
-| 8 | f24_interval_mean | 0.0243 | Interval | Average melodic interval size |
-| 9 | f8_most_common_pc_ratio | 0.0239 | Pitch | Most common pitch class ratio |
-| 10 | f25_interval_std | 0.0238 | Interval | Interval size variation |
+1. **Handcrafted features outperform pretrained embeddings** on small datasets (~49.3% vs 47.1%)
+2. **SVM outperforms MLP** on MidiBERT embeddings (47.1% vs 45.3%)
 
 ## Project Structure
 
