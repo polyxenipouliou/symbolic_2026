@@ -93,43 +93,8 @@ Derived from the four-layer theoretical framework:
 | **Melodic Contour** | `mc_mean`, `mc_std`, `mc_entropy` | Interval succession statistics (categorical encoding) |
 | **Pianistic Texture** | `pt_mean`, `pt_std`, `pt_entropy` | Note onset density per eighth-note position |
 
-### 2. Handcrafted Features (54-60D)
 
-Extended feature set extracted using music21, including:
-
-**Basic Pitch Statistics:**
-- `f2_pitch_mean`, `f3_pitch_std`, `f4_pitch_range`, `f5_unique_pitches`, `f6_unique_pitch_classes`
-
-**Pitch Class Distribution:**
-- `f7_pitch_class_entropy`, `f8_most_common_pc_ratio`, `f9_high_pitch_ratio`, `f10_low_pitch_ratio`
-
-**Duration & Rhythm:**
-- `f16_dur_mean`, `f17_dur_std`, `f18_dur_max`, `f19_ioi_mean`, `f20_ioi_std`
-- `f21_note_density`, `f22_staccato_ratio`, `f23_legato_ratio`
-
-**Interval Statistics:**
-- `f24_interval_mean`, `f25_interval_std`, `f26_interval_max`
-- `f27_unison_ratio`, `f28_stepwise_ratio`, `f29_leap_ratio`, `f30_octave_leap_ratio`
-
-**Higher-Order Moments:**
-- `f31_pitch_skew`, `f32_pitch_kurt`, `f33_dur_skew`, `f34_ioi_skew`
-
-**Pitch Class Histogram (12 dimensions):**
-- `f35_pc_0_ratio` through `f46_pc_11_ratio`
-
-**Texture & Syncopation:**
-- `f47_simultaneity_mean`, `f48_simultaneity_max`, `f49_single_note_ratio`, `f50_thick_chord_ratio`
-- `f51_offbeat_ratio`
-
-**Specific Interval Preferences:**
-- `f52_minor3rd_ratio`, `f53_major3rd_ratio`, `f54_perfect4th_ratio`, `f55_tritone_ratio`
-- `f56_perfect5th_ratio`, `f57_minor6th_ratio`, `f58_major6th_ratio`, `f59_minor7th_ratio`, `f60_major7th_ratio`
-
-**Excluded Features:**
-- Note count (`f1`): Removed as proxy for piece length
-- Velocity features (`f11-f15`): Excluded as MIDI velocity reflects editorial conventions, not composer intent
-
-### 3. MidiBERT Embeddings (768D)
+### 2. MidiBERT Embeddings (768D)
 
 Pre-trained transformer representations extracted using [Adversarial-MidiBERT](https://github.com/RS2002/Adversarial-MidiBERT).
 
