@@ -335,7 +335,7 @@ flowchart TD
 
 ## License
 
-This project is for educational and research purposes. Data sources (OpenScore, Winterreise Dataset) have their respective licenses.
+This project is for educational and research purposes. Data sources (OpenScore) have their respective licenses.
 
 ---
 
